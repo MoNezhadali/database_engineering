@@ -57,3 +57,80 @@ Optimistic: No locks, just track if things changed and fail the transaction if s
 Repeatable read (RR) lock: It locks the rows it reads but it could be expensive if you read a lot of rows, postgres implements RR as sanpshot That is why you don't get phantom reads with postgres in repeatable read
 
 Serialiazble are usually implemented with optimistic concurrency control, you can implement it pessimistiacally with `SELECT FOR UPDATE`.
+
+## Consistency
+
+`Consistency in data`: It ensutes that the databse remains in a valid state after any transaction.
+
+- defined by the user
+- referential integrity (foreign keys)
+- atomicity
+- isolation 
+
+e.g. picture 1 has got 5 likes, but it does not equate the count of the likes of all people who likes it.
+
+`Consistency in reads`: If you write a new value to a database node, how soon will a read from another node reflect that update?
+
+## Durability
+
+Changes made by committed transactions must be persisted in a durable non-volatile storage.
+
+Durability techniques:
+- WAL, write ahead log
+- Asynchronous snapshot
+
+
+## Hands-on practices:
+
+In order to run a postgres server using docker, run:
+
+```bash
+docker run --name pgacid -d -e POSTGRES_PASSWORD=postgres postgres:13
+```
+
+In order to go to the container interactively, you run:
+
+```bash
+docker exec -it pgacid psql -U postgres
+```
+
+Then you can run SQL code in the terminal:
+
+```sql
+create table products (pid serial primary key,
+name text,
+price float,
+inventory integer);
+```
+
+Then,
+
+```sql
+insert into products(name, price, inventory) values('Phone', 999.99, 100);
+```
+
+then,
+
+```sql
+select * from products;
+```
+
+In best case you should run the above in a transaction:
+
+```sql
+begin transaction;
+select * from products;
+update products set inventory = inventory -10;
+commit;
+```
+
+If any of the steps fail, the rest will not be run, and before running `commit` no change will be seen to other sessions.
+
+But in order to keep the transaction from inconsistency, we can run it with defining isolation level (the default is read commited)
+
+```sql
+begin transaction isolation level repeatable read;
+select * from products;
+```
+
+even if somebody else changes the table in the meantime, we do not recognize it.
