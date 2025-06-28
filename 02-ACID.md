@@ -134,3 +134,9 @@ select * from products;
 ```
 
 even if somebody else changes the table in the meantime, we do not recognize it.
+
+In order to get the transaction isolated from all other transactions, you can use `isolation level serializable`.
+
+```sql
+begin transaction isolation level serializable;
+```
