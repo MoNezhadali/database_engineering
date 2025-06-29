@@ -140,3 +140,7 @@ In order to get the transaction isolated from all other transactions, you can us
 ```sql
 begin transaction isolation level serializable;
 ```
+
+### Seiralizable vs. Repeatable-read
+
+If you wanna flip `aa` and `bb` in a database, you can use repeatable-read with two concurrent transactions. But if you want to get them converted to `aa` and then all two `bb`, you should go serializable. You will get an error in serializable if a concurrent transaction has changed the data you want to change and commited before you commit your transaction.
