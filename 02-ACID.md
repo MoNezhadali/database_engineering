@@ -144,3 +144,10 @@ begin transaction isolation level serializable;
 ### Seiralizable vs. Repeatable-read
 
 If you wanna flip `aa` and `bb` in a database, you can use repeatable-read with two concurrent transactions. But if you want to get them converted to `aa` and then all two `bb`, you should go serializable. You will get an error in serializable if a concurrent transaction has changed the data you want to change and commited before you commit your transaction.
+
+
+### Eventual consistency
+
+If you have several databases (which is normally the case in industry, i.g. backup, load balalnce, etc.), updating one will result in temporary inconsistency. A proper database will have eventual consistency, in the sense that in some point in the future the database will have consistency in reads.
+
+As long as you want to scale horizontally or introduce caching, you'll have inconsistency in reads.
