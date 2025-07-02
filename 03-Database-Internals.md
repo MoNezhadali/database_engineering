@@ -6,10 +6,6 @@ Internal and maintained by the system; in some DB systems it is the same as prim
 
 ## Page
 
-Row oriented storage: optimized for OLTP (Online Transaction Processing): workloads with lots of small fast-reads and writes like inserting or updating a few rows at a time. Examples: MySQL, PostgreSQL, ... 
-
-Column-oriented storage: Optimized for OLAP (Online Analytical Processing) – workloads involving scanning lots of rows but only a few columns, like in reporting or analytics. Examples: Amazon Redshift, ClickHouse, Apache Parquet files, Google BigQuery
-
 Depending on the storage model (row vs column store), the rows are stored and read in logical pages. The DB does not read a single row, it reads a page or more in a single IO.
 
 Each page has a size (e.g. 8KB in postgres) which translates to disk location.
@@ -45,3 +41,11 @@ Primary key is usually a clustered index unless otherwise specified.
 InnoDB (the storage engine of MySQL) always have a primary key (clustered index), other indices point to the primary key "value".
 
 Postgres only have secondary indices and all indices point directly to the row_id which lives in the heap.
+
+## Column vs Row-oriented databses
+
+Row oriented storage: optimized for OLTP (Online Transaction Processing): workloads with lots of small fast-reads and writes like inserting or updating a few rows at a time. Optinal for read and writes, compressions is not efficient, aggregation is not efficient, efficeient queries with multi-columns. Examples: MySQL, PostgreSQL, ... 
+
+Column-oriented storage: Optimized for OLAP (Online Analytical Processing) – workloads involving scanning lots of rows but only a few columns, like in reporting or analytics. Writes are slower, compresses greately, amazing for aggregation, inefficient queries with multi-columns. Examples: Amazon Redshift, ClickHouse, Apache Parquet files, Google BigQuery
+
+In column-oriented databases, the row-id is duplicated in every column.
