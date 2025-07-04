@@ -115,3 +115,67 @@ Seq Scan on grades (... width=4)
 ```
 
 meaning that the id is `4 bytes` which makes sense because it is an integer. If you try it with `name` instead, you'll get something like `19 bytes` since it is a string of `19 bytes` (on average).
+
+## Sequential table scan vs index scan vs bitmap index scan
+
+If we run the query:
+
+```sql
+explain select name from grades where id=1000;
+```
+
+The result will be:
+```text
+Index Scan using grades_pkey on grades (...)
+Index Cond: (id =1000)
+```
+
+If we run:
+
+```sql
+explain select name from grades where i<100;
+```
+
+we still get:
+
+```text
+Index Scan using grades_pkey on grades (...)
+Index Cond: (id <100)
+```
+
+But if we ask for more rows, e.g.
+
+```sql
+explain select name from grades where i>100;
+```
+
+Then it is smart enought to switch to sequential scan:
+
+```text
+Seq Scan on grades (...)
+Filter: (id > 100)
+```
+
+If you run a query like:
+
+```sql
+explain select name from grades g>95;
+```
+
+Then it's going to run a `Bitmap index scan`:
+
+```text
+Bitmap heat scan on greades(...)
+Recheck cond: (g>100)
+Bitmap Index scan on g (...)
+```
+
+where it marks all the pages in which the condition is satisfied using the index (bitmap), fetches all the pages, rechecks the condition, and delivers the results.
+
+These can also get combined:
+
+```sql
+explain select name from grages where g>95 and id<10000;
+```
+
+Then it will create two `bitmaps` and run `and` logical operation on them. It will make it really efficient.
