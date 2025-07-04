@@ -49,3 +49,9 @@ Row oriented storage: optimized for OLTP (Online Transaction Processing): worklo
 Column-oriented storage: Optimized for OLAP (Online Analytical Processing) – workloads involving scanning lots of rows but only a few columns, like in reporting or analytics. Writes are slower, compresses greately, amazing for aggregation, inefficient queries with multi-columns. Examples: Amazon Redshift, ClickHouse, Apache Parquet files, Google BigQuery
 
 In column-oriented databases, the row-id is duplicated in every column.
+
+## Primary key vs. Secondary key
+
+Primary key comes with a structure and the table is even physically built around it. It defines the table’s logical identity. It is often used as the basis for clustering (in some database systems like SQL Server or InnoDB in MySQL). 
+
+Secondary key is maintained separately. It may or may not be indexed (you can choose to create an index on it). It is used for lookup, joins, or enforcing referential integrity (in the case of foreign keys). It does not affect the physical layout of the table (generally). In PostgreSQL all indices are secondary indices.
