@@ -53,3 +53,65 @@ However, if you run an expression instead of an exact value, you'll be back to s
 
 That means having the index does not necessarily mean it will be used. The engineer should give proper hints to the engine to be able to use the index and optimize the queries.
 
+## Understanding the SQL querey planner and optimizer with explain
+
+Let's assume we have a table with three columns: (`id`, `name`, and `g` (grade)) and it is indexed on `id` and `g` but not on `name`.
+
+Let's start with the worst query:
+
+```sql
+explain select * from grages;
+```
+
+The result will be like:
+
+```text
+Seq scan on grages (cost=0.00..289025.15 rows=12141215 width=31)
+```
+
+The first number in `cost` before `..` shows how much time it took before fetching the data. The second number `289025` tells how much time does it `estimate` to run the query (based on its statistics). So this is not accurate, so is the rows (`12141215`). It is not accurate, but it gives a good estimate. That's why when you want to know the number of likes for a post on `Instagram`, you should run this not `count()` because what you want is an estimate and it is much cheaper. Then the `width` shows the number of `bytes` of each row.
+
+If we run:
+
+```sql
+explain select * from grades order by g;
+```
+
+You'll get:
+
+```text
+Index Scan using g_index on grades (...)
+```
+
+Then it is using `g_index` which makes the `order by` faster.
+
+If we run the following it will be much slower:
+
+```sql
+explain select * from grades order by name;
+```
+
+You'll get (you should read it bottom to top):
+
+```text
+Gather Merge (...)
+Workers Planned: 2
+Sort (cost=1023586.72..1036233.82)
+Parallel Seq Scan on grades (...)
+```
+
+And this time even the preparation time (`1023 s` is very high.)
+
+If we try:
+
+```sql
+explain select id from grades;
+```
+
+we get something like:
+
+```sql
+Seq Scan on grades (... width=4)
+```
+
+meaning that the id is `4 bytes` which makes sense because it is an integer. If you try it with `name` instead, you'll get something like `19 bytes` since it is a string of `19 bytes` (on average).
