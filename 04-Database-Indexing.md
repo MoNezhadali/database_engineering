@@ -179,3 +179,59 @@ explain select name from grages where g>95 and id<10000;
 ```
 
 Then it will create two `bitmaps` and run `and` logical operation on them. It will make it really efficient.
+
+### Key vs Non-key column indices
+
+In the query:
+
+```sql
+explain analyze select id, g from students where g > 8 and g < 95 order by g desc;
+```
+
+It has to do sorting (because of `desc`) and it has to do (parallel) sequential scan since there are no indices on `g`.
+
+Then if we create an index on g, it will be faster:
+
+```sql
+create index g_idx on students(g);
+```
+
+Then the query:
+
+```sql
+explain analyze select id, g from students where g > 8 and g < 95 order by g desc;
+```
+
+Then based on the condition (if there was no condition, it may have used sequential scan probably, my idea), it uses index scan. If you limit the number of results it may be even faster.
+
+If we want to create a `non-key` index, we can run:
+
+```sql
+drop index g_idx;
+
+create index g_idx on students(g) include (id);
+```
+
+This builds an index on `g`, meaning it's ordered and searchable by `g`. The column `id` is included in the index payload, but not used for sorting or searching. THis allows `PostfreSQL` to satisfy queries that need `id` without reading the main table (the heap).
+
+Then if we run:
+
+```sql
+explain (analyze,buffers) select id, g from students where g > 10 and g < 20 order by g desc;
+```
+
+It will be an index only scan, where we do not go to the heap. The `buffers` argument will create a report like this:
+
+```text
+Buffers: shared hit=123 read=4 dirtied=0 written=0
+```
+
+where `shared hit` reports the cache hits, `read` reports the reads from the disc, `dirtied` reports the modified pages, and `written` reports the written pages back to the disc.
+
+A command like:
+
+```sql
+vacuum (VERBOSE) students;
+```
+
+can be used to clean up dead tuples, free up space, update statistics, prevent table bloat over time, and keep index pages clean and updated. However, `vaccum` is run automatically by itself by default.
