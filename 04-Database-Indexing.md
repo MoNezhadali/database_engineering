@@ -346,3 +346,24 @@ All of these are decided based on the `statistics` of the tables that the databa
 NOTE: In some databases, query performance can be suboptimal immediately after inserting rows if the query planner hasn't yet updated its statistics. This can cause the engine to choose a less efficient plan, possibly leading to a full table scan. Consider running `ANALYZE` or waiting for automatic stats updates if performance is critical.
 
 If you are confident about your query, in some database systems you can even give hints, telling the engine which index to use. (in case you think you know better what to do compared to the database engine default heuristic behaviour.)
+
+## Avoiding blocking production database writes by creating indices concurrently
+
+If you create an index on a column in a table of a database, you CANNOT `write` concurrently. As a note, you CAN `read`. So it is a problem only with `writing`.
+
+For doing so, you can:
+
+```sql
+create index concurrently g on grades(g)
+```
+
+Then you can do a write, while the index is being created.
+
+```sql
+-- you can write
+insert into grades(g) values(1)
+-- and you can read
+select g from grades where id < 10;
+```
+
+There is a drawback there that the process of creating the index will take longer, more CPU usage, more memory, and may even fail, but normally you prefer that over breaking your live production code.
