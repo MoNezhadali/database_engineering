@@ -367,3 +367,13 @@ select g from grades where id < 10;
 ```
 
 There is a drawback there that the process of creating the index will take longer, more CPU usage, more memory, and may even fail, but normally you prefer that over breaking your live production code.
+
+## Bloom filters
+
+A bloom filter is a space-efficient, probabilistic data structure used in databases to quickly test whether an element might be present in a set. It works based on `hashing` the qurey input, so it can return false positves.
+
+```text
+Hash(Ali) % 64 = 4
+```
+
+Then mark the location `4` in your array as 1. Then if somebody else asks for the username `ali` it will return 1, then you go query the database. If it returns 0, you're sure it does not exist. You can also run several of these hash functions to reduce the odds of false-positves.
