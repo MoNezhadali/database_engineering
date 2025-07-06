@@ -330,3 +330,19 @@ SELECT * FROM test WHERE a = 1 AND b = 2;
 -- a ORDER BY b
 SELECT * FROM test WHERE a = 1 ORDER BY b;
 ```
+
+## How does a database optimizer choose which index to choose?
+
+Databases do some heuristics when it comes to choosing what to do: 
+
+1. If there are many rows that satistfy the condition for `a` and many that satisfy the condition on `b`, the database engine does `bitmap index scan` on the two and `and`s them.
+
+2. If one of the two only satisfies a few rows, and the other one many, then the databse engine directly goes to the `heap` after doing the search for one.
+
+3. If both filters return a big proportion of the table, the database engine will decide to do `Seq Scan` on the table.
+
+All of these are decided based on the `statistics` of the tables that the databases keep. The `analyze` command also uses these statistics to give estimates.
+
+NOTE: In some databases, query performance can be suboptimal immediately after inserting rows if the query planner hasn't yet updated its statistics. This can cause the engine to choose a less efficient plan, possibly leading to a full table scan. Consider running `ANALYZE` or waiting for automatic stats updates if performance is critical.
+
+If you are confident about your query, in some database systems you can even give hints, telling the engine which index to use. (in case you think you know better what to do compared to the database engine default heuristic behaviour.)
