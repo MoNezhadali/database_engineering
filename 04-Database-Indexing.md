@@ -235,3 +235,19 @@ vacuum (VERBOSE) students;
 ```
 
 can be used to clean up dead tuples, free up space, update statistics, prevent table bloat over time, and keep index pages clean and updated. However, `vaccum` is run automatically by itself by default.
+
+## Index Scan vs. Index Only Scan
+
+If there is an index on ids, the following will be an `index scan`:
+
+```sql
+explain analyze select name from grades where id = 7;
+```
+
+which is fast, but it has to go to the `heap` to fetch the `name`. However, you create an index like this:
+
+```sql
+create index id_idx on grades(id) include (name);
+```
+
+where `id` is a key column and `name` is a `non-key` column, then the afrementioned query will be `index only scan`, which is faster.
