@@ -251,3 +251,82 @@ create index id_idx on grades(id) include (name);
 ```
 
 where `id` is a key column and `name` is a `non-key` column, then the afrementioned query will be `index only scan`, which is faster.
+
+## Combining database indices for better performance
+
+Let's create an index on `a`:
+
+```sql
+create index on test(a);
+
+create index on test(b);
+```
+
+If we run:
+
+```sql
+explain analyze select c from test where a = 70;
+```
+
+then, it will run a `Bitmap Index Scan` followed by a recheck and `Bitmap Heat Scan` because there are many rows where `a = 70`.
+
+If we run this query:
+
+```sql
+explain analyze select c from test where a = 70 limit 2;
+```
+
+then it will be an `Index Scan` (PostgreSQL will understand and optimize it on its own.)
+
+Same happens if you run these on `b` instead of `a`.
+
+If we run a combined search like:
+
+```sql
+explain analyze select c from test where a=70 or b = 100;
+```
+
+it will run two `Bitmap Index Scan`, run logical operation (`or`) on them, and then run a `Bitmap Heat Scan` (with recheck).
+
+An alternative is to drop indices:
+
+```sql
+drop index test_a_idx, test_b_idx;
+```
+
+Instead we can create a `composite index`:
+
+```sql
+create index on test(a,b);
+```
+
+Then if you run:
+
+```sql
+explain analyze select c from test where a = 70;
+```
+
+then PostgreSQL will use `test_a_b_idx` for `Bitmap Heat Scan` even though the search is on `a`. This is because `a` has been on the left-hand-side in (`index on test(a,b)`). If you run it on `b` it will run `Parallel Seq Scan`.
+
+If you run:
+
+```sql
+explain analyze select c from test where a = 70 and b = 80;
+```
+
+It will run an `Index Scan` which is really fast, so in case queries are normally like `and` (`or` is still slow) operation on two columns, it is recommended to use `composite index`.
+
+If you want to run an `or` operation, you can create one index on `b` in addition to the index on `(a,b)`, then PostgreSQL will run one `Bitmap index Scan` on `a` using `test_a_b_idx` and another `Bitmap index Scan` on `b` using `test_b_idx` and the `or` them together with recheck and `Bitmap Heap Scan` (just like the above).
+
+NOTE: The composite index creates an index on both columns togther, ordered by `a` then `b`. It results in efficient queries that filter or sort by:
+
+```sql
+-- a
+SELECT * FROM test WHERE a = 1;
+
+-- a And b
+SELECT * FROM test WHERE a = 1 AND b = 2;
+
+-- a ORDER BY b
+SELECT * FROM test WHERE a = 1 ORDER BY b;
+```
