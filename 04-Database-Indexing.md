@@ -395,3 +395,9 @@ Let's say you have a table with two rows (he-who-follows, and he-who-is-followed
 ## Effect of UUIDs in DB performance
 
 In this section we are talking about `UUID` version `4`, which is totally random. While inserting new rows to the database (`write`), this randomness becomes a hassle especially when the `id` is indexed. The reason behind it is the structure of the index (`b-tree`, it is ordered list among other things) which should be maintained during insertions.
+
+## Dead-rows issue
+
+An issue may arise when a large transaction modifies many rows and is later rolled back.
+
+If such a transaction fails, millions of invalid row versions remain. PostgreSQL handles cleanup lazily using a background process called `vacuum`, rather than immediately on rollback. While this avoids blocking the database, it leaves "dead rows" that make disk I/O inefficient—more reads are needed to fetch fewer live rows, hurting performance. Other databases may handle roll-backs eagerly. This should be noted in DB design.
