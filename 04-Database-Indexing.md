@@ -391,3 +391,7 @@ Let's say you have a table with two rows (he-who-follows, and he-who-is-followed
 4. Sharding: distributing different portions of data across multiple databases or servers (shards). (as opposed to partitioning which happens in one database)
 
 5. Another way to tackle it is to avoid the billion-row table altogether, e.g. storing the followers of each user as a json input in the profile table. (Maybe it is even the first choice!)
+
+## Effect of UUIDs in DB performance
+
+In this section we are talking about `UUID` version `4`, which is totally random. While inserting new rows to the database (`write`), this randomness becomes a hassle especially when the `id` is indexed. The reason behind it is the structure of the index (`b-tree`, it is ordered list among other things) which should be maintained during insertions.
