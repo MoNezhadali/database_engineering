@@ -15,3 +15,16 @@ B-Trees store both the keys and the values. Meaning that when reading them a lot
 ## B+Tree
 
 B+Tree is exactly like a B-tree but only stors keys in internal nodes. Values are only stored in leaf nodes. Internal nodes are smaller since they only store keys and they can fit many more elements. Leaf nodes are linked so once you find a key you can find all values before and after that key (which helps a lot in range quries.). One important note is that when the value you search for is equal to the node you go in a specific direction, e.g. in birnary you go right. (you'll finally find the value for that key at the leaf, i.g. in the leaf there is a duplicate of the key you search for and its corresponding value.)
+
+## B+Tree and DBMS Considerations
+
+The cost of leaf pointer (pointing to the next leaf) is cheap.
+Some BDMSs (database management system) don't have these pointers e.g. MongoDB does not have it because it does not expect range queries. DBMSs include only what is needed.
+
+In most DBMSs One node fits in one page.
+
+It can fit internal nodes easily in memory for fast traversals.
+
+Leaf nodes can live in data files in the heap.
+
+Most DBMSs use B+Trees.
