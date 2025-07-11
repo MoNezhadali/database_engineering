@@ -28,3 +28,11 @@ It can fit internal nodes easily in memory for fast traversals.
 Leaf nodes can live in data files in the heap.
 
 Most DBMSs use B+Trees.
+
+## B+tree storage cost in PostgreSQL vs MySQL
+
+B+Trees secondary index values can either point directly to the tuple (to the actual data rows) (PostgreSQL) or to the primary key (MySQL)
+
+If the primary key data type is expensive this can cause bloat in all secondary indexes for databases such as MySQL (InnoDB).
+
+Leaf nodes in MySQL (InnoDB) contains the full row since it is an IOT (index-organized table) which means that the database does not need to do an additional lookup, it's already in the index. This is different from heap-organized table, where the data is stored separately and indices point to row locations.
