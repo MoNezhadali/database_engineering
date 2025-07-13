@@ -19,3 +19,11 @@ Partitioning can be based on:
 2. By list, e.g. discrete values. Example steates CA, AL, etc. or zip codes.
 
 3. By Hash, hash functions. Example: hashing the IPs.
+
+## Partitioning vs Sharding
+
+Partitioning splits a big table into multiple tables in the same database, client is agnostic meaning that the client doesn't know which partition he is hitting; he queries the same query.
+
+Sharding splits big table into multiple tables across multiple database servers. In this case client is aware of where he or she is hitting. This can be thought of as a limitation.
+
+In partitioning the table name changes (or schemas). In sharding everything is the same but server changes.
