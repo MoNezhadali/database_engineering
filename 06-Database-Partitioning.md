@@ -27,3 +27,28 @@ Partitioning splits a big table into multiple tables in the same database, clien
 Sharding splits big table into multiple tables across multiple database servers. In this case client is aware of where he or she is hitting. This can be thought of as a limitation.
 
 In partitioning the table name changes (or schemas). In sharding everything is the same but server changes.
+
+## How to create partitions in PostgreSQL
+
+```sql
+-- have to define partition by:
+create table grades_parts (id serial not null, g int not null) partition by range(g);
+
+-- we create partitions one by one:
+create table g0035 (like grades_parts including indexes);
+
+-- You can check description of the table and you will see it is similar to grades_parts
+\d g0035
+
+-- you can also create all the four partitions:
+create table g3560 (like grades_parts including indexes);
+create table g6080 (like grades_parts including indexes);
+create table g80100 (like grades_parts including indexes);
+
+-- Then you will attach partitions one by one:
+alter table grades_parts attach partition g0035 for values from (0) to (35);
+
+alter table grades_parts attach partition g3560 for values from (35) to (60);
+
+--- and so on.
+```
