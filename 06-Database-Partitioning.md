@@ -98,3 +98,14 @@ set enable_partition_pruning = off;
 ```
 
 It will hit all the partions, meaning that the entire partitioning will be useless. Have it `on`.
+
+## Pros and Cons of Partitioning
+
+Pros of partitioning:
+- Improves query performance when accessing a single partition
+- Easy bulk loading (attach a partition), for example `MySQL` supports csv tables. If they are organized in a meaningful way, you can attach them as partitions and you are good!
+- Archive old data that are barely accessed into cheap storage
+
+Cons of partitioning:
+- Updates that move rows from a partition to another are slow or fail sometimes (maybe it should be avoided because it actually affects the definition of what partition is).
+- Inefficient queries could accidently scan all partitions resulting in slower performance
