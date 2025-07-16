@@ -52,3 +52,26 @@ alter table grades_parts attach partition g3560 for values from (35) to (60);
 
 --- and so on.
 ```
+
+## How to populate partitions and create indexes
+
+```sql
+-- This will automatically copy all the rows from the original table to the partitioned one
+insert into grades_parts select * from grades_org;
+
+-- Then you can run:
+select max(g) from grades_parts;
+-- or
+select max(g) from g0035;
+```
+
+In `PostgreSQL` version `12` and onwards, you can directly create indexes on the partioned table and all its partitions:
+
+```sql
+create index grades_parts_idx on grades_parts(g);
+
+-- Then if you do:
+\d grades_parts;
+\d g0035;
+-- They will both show they have indexes created on them.
+```
