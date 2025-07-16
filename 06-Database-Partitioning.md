@@ -75,3 +75,26 @@ create index grades_parts_idx on grades_parts(g);
 \d g0035;
 -- They will both show they have indexes created on them.
 ```
+
+Then if we query on the partions:
+
+```sql
+explain analyze select count(*) from grades_parts where g=30;
+-- you will see Index Only Scan using g0035_g_idx on g0035
+```
+
+In order to see the size of tables, and indexes:
+
+```sql
+select pg_relation_size(oid), relname from pg_class or der by pg_relation_size(oid) desc;
+```
+
+You will see that the smaller indexes are much smaller than the big index on the entire table, hence it is faster to query it.
+
+Note that you want the `ENABLE_PARTITION_PRUNING` to be `on`. If it is `off`:
+
+```sql
+set enable_partition_pruning = off;
+```
+
+It will hit all the partions, meaning that the entire partitioning will be useless. Have it `on`.
