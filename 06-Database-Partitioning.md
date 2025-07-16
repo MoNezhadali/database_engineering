@@ -109,3 +109,7 @@ Pros of partitioning:
 Cons of partitioning:
 - Updates that move rows from a partition to another are slow or fail sometimes (maybe it should be avoided because it actually affects the definition of what partition is).
 - Inefficient queries could accidently scan all partitions resulting in slower performance
+
+## How to automate partitioning in Postgres
+
+You can use, python, JS, or other libraries to create automations for databases.
