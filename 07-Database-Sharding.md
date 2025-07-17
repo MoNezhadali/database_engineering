@@ -19,3 +19,41 @@ HP splits a big table into multiple tables in the same databse.
 Sharding spits a big table into multiple tables across multiple database servers.
 
 In HP the table name changes (or schema). However, in sharding everything is the same but the server changes.
+
+## Sharding with Postgres
+
+First we create the `init.sql` file to be run in every database instance (e.g. in docker)
+
+```sql
+CREATE TABLE URL_TABLE
+(
+    id serial NOT NULL PRIMARY KEY,
+    URL text,
+    URL_ID character(5)
+)
+```
+
+Then we can create a `Dockerfile`:
+
+```Dockerfile
+FROM postgres
+COPY init.sql /docker-entrypoint-initdb.d
+```
+
+The `PostgreSQL` official Docker image automatically runs scripts placed inside `/docker-entrypoint-initdb.d/`.
+
+Then we can create the image by:
+
+```bash
+docker build -t pgshard .
+```
+
+Then we can run our containers:
+
+```bash
+docker run --name pgshard1 -p 5432:5432 -d pgshard
+docker run --name pgshard2 -p 5433:5432 -d pgshard
+docker run --name pgshard3 -p 5434:5432 -d pgshard
+```
+
+Given we already have a docker container running called `pgadmin` listening to port `5555`, then you can go to GUI of `pgadmin` (a software for administration), and create and add your shards.
