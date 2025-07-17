@@ -11,3 +11,11 @@ Imagine you have a url-shortner (you store the actual urls in a database and red
 ## Consistent Hashing
 
 The idea of hashing here is similar to classic `hash` functions. It is a deterministic function whose output somehow always points to one speciefic database for one specific input string.
+
+## Horizontal Partitioning (HP) vs Sharding
+
+HP splits a big table into multiple tables in the same databse.
+
+Sharding spits a big table into multiple tables across multiple database servers.
+
+In HP the table name changes (or schema). However, in sharding everything is the same but the server changes.
