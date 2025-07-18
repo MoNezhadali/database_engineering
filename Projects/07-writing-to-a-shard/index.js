@@ -1,8 +1,8 @@
 const app = require('express')();
 const {Client} = require("pg");
 const crypto = require("crypto");
-const ConsistentHash = require("consistent-hash");
-const hr = new ConsistentHash();
+const HashRing = require("hashring");
+const hr = new HashRing();
 
 hr.add("5432");
 hr.add("5433");
@@ -45,9 +45,30 @@ async function connectClients() {
     }
 }
 
-app.get('/', (req, res) => {
-
-})
+app.get('/:urlId', async (req, res) => {
+    //http://localhost:8081/fhy2h
+    const urlId = req.params.urlId;
+    // consistently hash the URL ID to determine the shard
+    const server = hr.get(urlId);
+    // This is prone to SQL injection. Be careful!!
+    const result = await clients[server].query(
+        "SELECT URL FROM URL_TABLE WHERE URL_ID = $1",
+        [urlId]
+    )
+    if (result.rowCount > 0) {
+        res.send(
+            {
+                "urlId": urlId,
+                "url": result.rows[0].url,
+                "server": server
+            }
+        )
+    } else {
+        res.sendStatus(404).send({
+            "error": "URL not found"
+        });
+    }
+});
 
 app.post("/", async (req, res) => {
     const url = req.query.url;
