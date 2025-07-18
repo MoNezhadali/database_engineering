@@ -59,3 +59,20 @@ docker run --name pgshard3 -p 5434:5432 -d pgshard
 Given we already have a docker container running called `pgadmin` listening to port `5555`, then you can go to GUI of `pgadmin` (a software for administration), and create and add your shards.
 
 NOTE: When you use this type of sharding (also explained under `Projects/07-writing-to-a-shard/index.js`), you cannot add one more shard randomly. That specific implementation is for a fix number of shards, if you change that number in the backed randomly, it will screw everything!
+
+## Pros and Cons of Sharding
+
+Pros of sharding:
+
+- Scalability (both in data and memory)
+- Security (users can access certain shards, not others)
+- Optimal and smaller index size
+
+Cons of sharding:
+
+- Complex client (we are aware of shards when querying)
+- Transactions across shards is a problem
+- Rollbacks (if dependent transactions go through in one shard and not in another shard)
+- Schema changes (you have to add a row in all the shards)
+- Joins (it is maybe not even possible to do joins across databases)
+- If want to query something that does not go through the hash function (e.g. name of the customer) then you have to hit all the databases
