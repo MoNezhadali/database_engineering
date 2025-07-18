@@ -57,3 +57,5 @@ docker run --name pgshard3 -p 5434:5432 -d pgshard
 ```
 
 Given we already have a docker container running called `pgadmin` listening to port `5555`, then you can go to GUI of `pgadmin` (a software for administration), and create and add your shards.
+
+NOTE: When you use this type of sharding (also explained under `Projects/07-writing-to-a-shard/index.js`), you cannot add one more shard randomly. That specific implementation is for a fix number of shards, if you change that number in the backed randomly, it will screw everything!
