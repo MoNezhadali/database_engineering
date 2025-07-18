@@ -49,12 +49,22 @@ app.get('/', (req, res) => {
 
 })
 
-app.post("/", (req, res) => {
+app.post("/", async (req, res) => {
     const url = req.query.url;
      // consistently hash the URL to determine the shard
     const hash = crypto.createHash("sha256").update(url).digest("base64");
+    const urlId = hash.substring(0, 5);
+    const server = hr.get(urlId);
+
+    await clients[server].query(
+        "INSERT INTO URL_TABLE (URL, URL_ID) VALUES ($1, $2)",
+        [url, urlId]
+    );
     res.send({
-        "hash": hash
+        "urlId": urlId,
+        "url": url,
+        "server": server
+
     }
     )
 })
