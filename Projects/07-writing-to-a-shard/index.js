@@ -1,0 +1,62 @@
+const app = require('express')();
+const {Client} = require("pg");
+const crypto = require("crypto");
+const ConsistentHash = require("consistent-hash");
+const hr = new ConsistentHash();
+
+hr.add("5432");
+hr.add("5433");
+hr.add("5434");
+
+const clients = {
+    "5432": new Client({
+        host: "localhost",
+        port: "5432",
+        user: "postgres",
+        password: "your_password",
+        database: "my_database",
+    }),
+    "5433": new Client({
+        host: "localhost",
+        port: "5433",
+        user: "postgres",
+        password: "your_password",
+        database: "my_database",
+    }),
+    "5434": new Client({
+        host: "localhost",
+        port: "5434",
+        user: "postgres",
+        password: "your_password",
+        database: "my_database",
+    })
+}
+
+connectClients();
+
+async function connectClients() {
+    for (const key in clients) {
+        try {
+            await clients[key].connect();
+            console.log(`Connected to PostgreSQL on port ${key}`);
+        } catch (error) {
+            console.error(`Error connecting to PostgreSQL on port ${key}:`, error);
+        }
+    }
+}
+
+app.get('/', (req, res) => {
+
+})
+
+app.post("/", (req, res) => {
+    const url = req.query.url;
+     // consistently hash the URL to determine the shard
+    const hash = crypto.createHash("sha256").update(url).digest("base64");
+    res.send({
+        "hash": hash
+    }
+    )
+})
+
+app.listen(8081, () => console.log("Server is running on port 8081"));
