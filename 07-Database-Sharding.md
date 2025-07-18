@@ -76,3 +76,10 @@ Cons of sharding:
 - Schema changes (you have to add a row in all the shards)
 - Joins (it is maybe not even possible to do joins across databases)
 - If want to query something that does not go through the hash function (e.g. name of the customer) then you have to hit all the databases
+
+## When should I shard my database
+
+There are many things that you should consider before sharding:
+- If your reads are slow, consider partitioning
+- If there are too many read queries, and it is overwhelming your server, if caching does not help, you can do replication (and redirect reads to them using e.g. Nginx). Since writing is normally fast, you can keep writing to the master (which periodically pushes to the replicas). Try to avoid writing to replicas since it can result in inconsistency.
+- Note that if you do sharding, then the database engine will not be able to gaurantee ACID rules, you are technically working with different databases. There are some third-party applications that can take care of sharding for you, i.e. you only not knowing about the shards.
