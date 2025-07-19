@@ -23,3 +23,29 @@ In growing, the transaction acquires all the locks it needs (shared or exclusive
 In shrinking, the transaction releases locks. No new locks can be acquired after releasing the first lock. Only unlocking is allowed.
 
 The two-phase locking, ensures transactions behave like they are running one after the other, even if they overlap, avoids issues like dirty reads, lost updates, and inconsistent reads, can cause deadlocks since transactions may block each other while waiting for locks.
+
+## Double-booking problem
+
+Double-booking problem happens when two people try to book the same seats in a cinema.
+
+If you do something like:
+```sql
+begin transaction;
+select * from seats where id = 13;
+update seats set isbooked = 1, name = 'Mohammad' where id = 13;
+
+-- and at the same time somebody else does:
+begin transaction;
+select * from seats where id = 13;
+update seats set isbooked = 1, name = 'Akbar' where id = 13;
+```
+Then it will result in double-booking. One way to solve it is with two-phase locking:
+
+```sql
+begin transaction;
+-- Use for update to acquire an exclusive lock
+select * from seats where id=13 for update;
+update seats set isbooked = 1, name = 'Mohammad' where id = 13;
+commit;
+-- after commiting the exclusive lock is released, and hence it avoids double-booking
+```
