@@ -70,7 +70,7 @@ update seats set isbooked = 1, u = 'Rick' where id = 1 and isbooked =0;
 
 in this case it works at the mercy of `PostgreSQL` (the information about the lock is stored in the row itself in `PostgreSQL`) because it implements a lock and waits until the other transaction is over. Then it will not update the pre-booked row. If the `id` or `isbooked` is indexed, maybe it does not go to row and update it (or maybe it will, we are not sure, but it's not good practice to be at the mercy of the database engine). But in general `PostgreSQL` is a pessimistic concurrency control database system and it takes care of many possible issues.
 
-# A note on SQL offset
+## A note on SQL offset
 
 `offset` is used to drop the first `1000` rows. You should not use `offset` like this:
 
@@ -88,3 +88,7 @@ select title, id from news where id < 100999993 ordr by id desc limit 10;
 ```
 
 This will be much faster.
+
+## Database Connection Pooling
+
+You should not create a connection to the database in every query you want to run (like `Projects/08-database-connection-pooling/old.js`). You should create a pool of connections, defining max number and max time for destroying them if idle like (`Projects/08-database-connection-pooling/pool.js`). It is much faster.
