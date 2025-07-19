@@ -47,5 +47,25 @@ begin transaction;
 select * from seats where id=13 for update;
 update seats set isbooked = 1, name = 'Mohammad' where id = 13;
 commit;
--- after commiting the exclusive lock is released, and hence it avoids double-booking
 ```
+
+After commiting the exclusive lock is released, and hence it avoids double-booking.
+
+### Alternative approach
+
+Alternatively, you can run:
+
+```sql
+begin;
+update seats set isbooked = 1, u = 'Mohammad' where id = 1 and isbooked =0;
+commit;
+```
+
+and if somebody else does:
+
+```sql
+begin;
+update seats set isbooked = 1, u = 'Rick' where id = 1 and isbooked =0;
+```
+
+in this case it works at the mercy of `PostgreSQL` (the information about the lock is stored in the row itself in `PostgreSQL`) because it implements a lock and waits until the other transaction is over. Then it will not update the pre-booked row. If the `id` or `isbooked` is indexed, maybe it does not go to row and update it (or maybe it will, we are not sure, but it's not good practice to be at the mercy of the database engine). But in general `PostgreSQL` is a pessimistic concurrency control database system and it takes care of many possible issues.
