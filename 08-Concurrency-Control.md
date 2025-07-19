@@ -92,3 +92,5 @@ This will be much faster.
 ## Database Connection Pooling
 
 You should not create a connection to the database in every query you want to run (like `Projects/08-database-connection-pooling/old.js`). You should create a pool of connections, defining max number and max time for destroying them if idle like (`Projects/08-database-connection-pooling/pool.js`). It is much faster.
+
+The former (`old`) is `stateless` meaning that each request is independent of previous ones, like makind a fresh call every time. The latter (with `pools`) is `stateful` is faster but has potential for `state leakage` between requests if not properly managed (e.g., uncommitted transactions, session variables).
