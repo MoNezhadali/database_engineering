@@ -69,3 +69,22 @@ update seats set isbooked = 1, u = 'Rick' where id = 1 and isbooked =0;
 ```
 
 in this case it works at the mercy of `PostgreSQL` (the information about the lock is stored in the row itself in `PostgreSQL`) because it implements a lock and waits until the other transaction is over. Then it will not update the pre-booked row. If the `id` or `isbooked` is indexed, maybe it does not go to row and update it (or maybe it will, we are not sure, but it's not good practice to be at the mercy of the database engine). But in general `PostgreSQL` is a pessimistic concurrency control database system and it takes care of many possible issues.
+
+# A note on SQL offset
+
+`offset` is used to drop the first `1000` rows. You should not use `offset` like this:
+
+```sql
+select title, id from news offset 1000 limit 10;
+```
+
+Issues:
+- If a new row is inserted in the meantime it will not take that into account (if you go to the new page, the first item is the last item you read in the previous page)
+- It gets increasingly slower and slower with increase in id
+
+First you should find the `id` (given id is increasing) of the last row you want and then:
+```sql
+select title, id from news where id < 100999993 ordr by id desc limit 10;
+```
+
+This will be much faster.
