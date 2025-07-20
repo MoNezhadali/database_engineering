@@ -142,3 +142,15 @@ you can also read it on `pstandby`. But if you do it on `pstandby`, you'll get:
 ```txt
 ERROR: cannot execute CREATE TABLE in a read-only transaction.
 ```
+
+
+## Pros and Cons of Replication
+
+Pros:
+- Horizontal scaling (at least for reads, for writes you can also do it if you go mulit-master)
+- Region based queries are possible - one database per region
+
+Cons:
+- Eventual consistency
+- Slow writes (in synchronous replication)
+- Complex to implement (multi-master)
