@@ -18,3 +18,7 @@ It is more complicated than the master-backup architecture (conflicts may easily
 - Need to resolve conflicts
 
 ## Synchronous vs. Asynchronous replication
+
+In Synchronous replicatoin, a write transaction to the master is blocked until it is written to the backup/standby nodes. If you have several backup nodes, it is also customizable to say unblock the clients when the (e.g.) first two backup nodes are synchronized. Here you get full consistency.
+
+In Asynchronous replication, a write transaction is considered successful if it is written to the master. Then the writes to the backup nodes are applied asynchronously.
