@@ -119,9 +119,9 @@ And that's all, here is how it works:
 
 The standby “pulls” data from the master.
 
-The master writes WAL locally, and makes it available for replication via its replication protocol (on the same port, 5432).
+The master writes WAL locally, and makes it available for replication via its replication protocol (on the same port, `5432`).
 
-The standby connects to the master using the info from primary_conninfo, then streams the WAL records.
+The standby connects to the master using the info from `primary_conninfo`, then streams the WAL records.
 
 You can now start the containers and check the logs:
 
@@ -129,4 +129,16 @@ You can now start the containers and check the logs:
 docker start pmaster pstandby
 docker logs pmaster
 docker logs pstandby
+```
+
+Then if you do the following on `pmaster`:
+
+```sql
+create table test(id int, t varchar(200));
+```
+
+you can also read it on `pstandby`. But if you do it on `pstandby`, you'll get:
+
+```txt
+ERROR: cannot execute CREATE TABLE in a read-only transaction.
 ```
