@@ -11,3 +11,7 @@ One issue with this implementation is that random people can access all the URLs
 ## Solution 2
 
 If we want to add the possibility for customized URLs, we can add two colums: `URL` and `SURL` (short `URL`). One thing you can do with a URL is to `sha()` on the URL and take the first `8` letters and create the short URL based on that. If we make the `SURL` the primary key, everytime we try inserting if it works it means the duplicate has not happened and if it doesn't the duplicate happen, then we can also store another column, e.g. `SALT` (which apparently stores a random string) then we should also check `SALT` in every `READ` operation.
+
+## Scaling of the service
+
+You can create two more database instances (`Backup` which will only be used for `read`)
