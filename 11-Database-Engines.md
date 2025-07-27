@@ -53,3 +53,11 @@ CREATE TABLE users (
 ```
 
 **Spatial Operation**: Spatial operations in a database refer to operations that deal with spatial data — data that represents the location, shape, and relationship of objects in space, typically in 2D or 3D (like maps, geometries, and coordinates), e.g. `ST_Distance` calculates distance between two geometries.
+
+## XtraBD
+
+- Fork of `InnoDB`
+- Was the default for `MariaDB` until `10.1`
+- In `MariaDB 10.2` switched the default to `InnoDB`
+- `XtraDB` could not be kept up-to-date with the latest features of `InnoDB` and cannot be used.
+- System tables in `MariaDB` starting with `10.4` are all `Aria`.
