@@ -88,3 +88,17 @@ CREATE TABLE users (
 - Supports ACID transactions, locks, replications, etc.
 - **Used to** be used in **Bitcoin** core (switched to `LevelDB`)
 - Used MemcacheDB
+
+## LevelDB
+
+- Developed by `Google`
+- Log structured merge tree (LSM) (great for high insert and SSD)
+- No transaction
+- It is called `LevelDB` since it has levels.
+- Every level is moved to the next level when it reaches its size.
+- Levels of files
+  - Memtables
+  - Level 0 (young level)
+  - Level 1 - 6
+- As files grow large levels are merged
+- Used in **Bitcoin** core blockchain, AutoCad, Minecraft.
