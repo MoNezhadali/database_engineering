@@ -130,3 +130,8 @@ Older versions remain until they're eventually discarded during compaction.
 ## Postgres
 
 The database engine for PostgreSQL is PostgreSQL itself — it's a complete, standalone database management system with its own storage engine and execution engine, unlike some other systems (e.g., MySQL) that can be used with multiple storage engines like InnoDB or MyISAM.
+
+## Database Engines comparison
+
+![Database comparison picture](Pictures/11/Database-engines-b-tree-vs-lsm.png)
+[Reference](https://www.yugabyte.com/blog/a-busy-developers-guide-to-database-storage-engines-the-basics/)
