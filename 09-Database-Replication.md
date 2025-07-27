@@ -8,7 +8,7 @@ It is also known as master-backup replication. It has:
 - Simple to implement (no conflicts)
 - When you read, you can read against both master and replicas (eventual consistency)
 
-![Alt text](Pictures/09/Database-replication-01.png)
+![Database replication picture](Pictures/09/Database-replication-01.png)
 
 ## Muli-master replication
 
