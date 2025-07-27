@@ -27,3 +27,29 @@ Some DBMS some with a build-in engine that you cannot change, e.g., `Postgres`.
 - Table-level locking (no row-level locking).
 - MySQL, MAriaDB, and Percona (MySQL forks) support MyISAM
 - **Used to** be default engine for `MySQL`.
+
+## InnoDB
+
+- B+tree - with indexes pointing to the primary key and the PK pointing to the row
+- Replaced MyISAM
+- Default for `MySQL` and `MariaDB`
+- ACID compliant transactions support
+- Foreign keys
+- Tablespaces*
+- Row-level locking
+- Spatial operations*
+- Owned by Oracle
+
+**Tablespace**: A tablespace in a database is a storage structure used to define where and how the actual data (like tables and indexes) is stored on disk. In `Postgres`:
+
+```sql
+CREATE TABLESPACE fastspace LOCATION '/mnt/ssd1/dbdata';
+
+-- then you can create a table:
+CREATE TABLE users (
+    id serial PRIMARY KEY,
+    name text
+) TABLESPACE fastspace;
+```
+
+**Spatial Operation**: Spatial operations in a database refer to operations that deal with spatial data — data that represents the location, shape, and relationship of objects in space, typically in 2D or 3D (like maps, geometries, and coordinates), e.g. `ST_Distance` calculates distance between two geometries.
