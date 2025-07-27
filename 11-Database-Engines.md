@@ -92,7 +92,7 @@ CREATE TABLE users (
 ## LevelDB
 
 - Developed by `Google`
-- Log structured merge tree (LSM) (great for high insert and SSD)
+- Log structured merge tree (LSM) (great for high insert and SSD)*
 - No transaction
 - It is called `LevelDB` since it has levels.
 - Every level is moved to the next level when it reaches its size.
@@ -102,3 +102,31 @@ CREATE TABLE users (
   - Level 1 - 6
 - As files grow large levels are merged
 - Used in **Bitcoin** core blockchain, AutoCad, Minecraft.
+
+Note: In some sense we can say, LevelDB does not update and only inserts. This is because SSDs are super-fast with insertion and reads. More comprehensively:
+
+LevelDB is based on a Log-Structured Merge Tree (LSM Tree), which means: 
+- Data is always appended first to an in-memory structure (memtable) and a write-ahead log.
+- Eventually, it is flushed to disk in sorted files (SSTables).
+- These SSTables are immutable — once written, they are not changed.
+
+What Happens When You **Update**? When you write a key that already exists, LevelDB:
+- Does not update the existing SSTable, because they are immutable.
+- Instead, it inserts a new version of the key (with a newer sequence number) in the memtable or newer SSTable.
+
+Reads return the latest version by scanning from memtable down through the levels.
+
+Older versions remain until they're eventually discarded during compaction.
+
+## RocksDB
+
+- Facebook forked LevelDB in `2012` to become `RocksDB`
+- Transactional
+- High Performance, Multi-threaded compaction
+- It has many features not present in `LevelDB`
+- MyRocks for MySQL, MariaDb, and Percona
+- MongoEocks for MongoDB
+
+## Postgres
+
+The database engine for PostgreSQL is PostgreSQL itself — it's a complete, standalone database management system with its own storage engine and execution engine, unlike some other systems (e.g., MySQL) that can be used with multiple storage engines like InnoDB or MyISAM.
