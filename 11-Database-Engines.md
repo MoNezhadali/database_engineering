@@ -72,10 +72,19 @@ CREATE TABLE users (
 - Web SQL in browsers use it
 - Included in many operating systems by default
 
-# Aria
+## Aria
 
 - Very similar to `MyISAM`
 - Crash-safe unlike MyISAM
 - **Not** owned by `Oracle`
 - Designed specifically for `MariaDB` (fork from `MySQL`)
-- In `MariaDB 10.4` all system tables are `Aria`. 
+- In `MariaDB 10.4` all system tables are `Aria`.
+
+## Berkeley DB
+
+- One of the oldest databases around (1994)
+- Owned by `Oracle`
+- Key-value embeded database
+- Supports ACID transactions, locks, replications, etc.
+- **Used to** be used in **Bitcoin** core (switched to `LevelDB`)
+- Used MemcacheDB
