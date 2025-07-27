@@ -135,3 +135,59 @@ The database engine for PostgreSQL is PostgreSQL itself — it's a complete, sta
 
 ![Database comparison picture](Pictures/11/Database-engines-b-tree-vs-lsm.png)
 [Reference](https://www.yugabyte.com/blog/a-busy-developers-guide-to-database-storage-engines-the-basics/)
+
+## Demo MySQL
+
+We use docker to run MySQL:
+
+```bash
+docker run --name ms1 -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password mysql
+
+# Then in another terminal
+docker exec -it ms1 bash
+mysql -u root -ppassword
+# Note that password comes right after -p so it will be -ppassword
+```
+
+Then we can run our queries:
+
+```sql
+CREATE DATABASE test;
+
+USE test;
+
+CREATE TABLE employees_myisam (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name TEXT
+) ENGINE = MyISAM;
+```
+
+This command shows what DB engines your DBMS supports:
+
+```sql
+SHOW ENGINES;
+```
+
+You can create a table using `InnoDB` by:
+
+```sql
+CREATE TABLE employees_innodb (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name TEXT
+) ENGINE = InnoDB;
+-- Note that ENGINE = InnoDB is not case-sensitive!
+```
+
+Note:
+- On **Linux** (case-sensitive file system): table names are **case-sensitive** by default.
+- On **Windows** (case-insensitive file system): table names are **not case-sensitive** by default.
+- **Column names**: always **case-insensitive** in MySQL (regardless of OS).
+
+From the client side everything is the same:
+```sql
+select name from employees_myisam
+
+select name from employees_innodb
+```
+
+However, since `MyISAM` does not support transactions, the changes are committed to the database write after the CRUD operation. This will wait until the end of transaction in the case of `InnoDB`.
