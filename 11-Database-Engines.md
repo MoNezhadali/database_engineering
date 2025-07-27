@@ -71,3 +71,11 @@ CREATE TABLE users (
 - Concurrent read and writes
 - Web SQL in browsers use it
 - Included in many operating systems by default
+
+# Aria
+
+- Very similar to `MyISAM`
+- Crash-safe unlike MyISAM
+- **Not** owned by `Oracle`
+- Designed specifically for `MariaDB` (fork from `MySQL`)
+- In `MariaDB 10.4` all system tables are `Aria`. 
