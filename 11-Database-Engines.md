@@ -61,3 +61,13 @@ CREATE TABLE users (
 - In `MariaDB 10.2` switched the default to `InnoDB`
 - `XtraDB` could not be kept up-to-date with the latest features of `InnoDB` and cannot be used.
 - System tables in `MariaDB` starting with `10.4` are all `Aria`.
+
+## SQLite
+
+- Very popular embedded database for local data.
+- B-tree (LSM as extension)
+- `Postgres`-like syntax
+- Full ACID and table locking
+- Concurrent read and writes
+- Web SQL in browsers use it
+- Included in many operating systems by default
