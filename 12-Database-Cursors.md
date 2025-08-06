@@ -53,3 +53,9 @@ A note on pagination:
 Cons of cursors:
 - It is stateful, meaning that there is some memory allocated for it in the database, and there is a corresponding transaction pointing to that cursor. If you make another request to another server (or another process) the other process would have no clue about the cursor. You cannot share the cursors (**That's a property of the transaction**)
 - Long-running transactions; if you want to run through a cursor, it has to be run through a transaction, meaning that the transaction has to be running for a long time; it will bother indexing, DDL cannot be done on the table if somebody is connected, etc.
+
+## Server-side vs. Client-side cursors
+
+A **server-side** cursor is maintained on the database server. The client sends a query and the server holds the result set and the cursor that fetches rows from it. The **data remains on the server**.
+
+A **client-side** cursor is when the **entire result set is fetched from the server to the client**, and the cursor operations (like navigation, scrolling) are performed on the client side.
