@@ -62,7 +62,7 @@ Here is a bigger picture of databases:
 
 **Data model**: Nodes (entities) and edges (relationships), often with properties on both.
 
-**Best for**: Social networks, recommendation engines, fraud detection. **Edges** have direct references (pointers) to connected nodes — no lookup needed to traverse. Traversal cost is **O(hops)**, not **O(rows)**.
+**Best for**: Social networks, recommendation engines, fraud detection. **Edges** have direct references (**pointers**) to connected nodes — no lookup needed to traverse. Traversal cost is **O(hops)**, not **O(rows)**.
 
 **Strengths**:
 - Relationships are first-class and very fast to traverse.
