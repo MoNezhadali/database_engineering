@@ -30,3 +30,17 @@ If we need to write a key with a new value of 44 bytes, we first need to calcula
 Because hashing maps keys to a fixed size, two keys may hash to the same index causing a collision. Let’s say I’m going to write a new key called “Nani”. The hash of “Nani” collides with another existing key.
 
 To solve this, Memcached makes each index in the hash table map to a chain of items as opposed to the item directly. We add the key “Nani” to the chain which has now two items. When the key is read, all items in the chain need to be looked up to determine which one matches the desired key, giving us a O(N) at worse case. Here is an example
+
+## Description of Structure
+
+MemCached is an in-memory key value store. It consists of `items` each of which is a pair of `key` and `value`. `key` is a string (`max 250 char`). The value can be any type (maximum `1 MB` but configurable). Keys have expiration date (TTL, time to live), but it is not reliable. Everything is stored in the memory.
+
+Since `values` are of different sizes in order not to define same chunk size for all of them, MemCached has defined differnent **Slab Classes**. Let's say each page is maximum `1 MB`. If an item is `40 Bytes`, it goes to **Slab Class 1**, in which `14563` chunks are fit in one page. If the item is `900 KB`, It goes to **Slab Class 43**, where only one chunk is fit in one page. If all the pages of a slab class are full, another page of that slab class is created for the new item.
+
+### LRU (Least Recently Used)
+
+The way least recently used items are found is through maintaining a `linked list` which has a head and a tail. Whenever an item is accessed, it is taken from the `tail` (or wherever it is), and attached to the `head`. Items that are not used may get removed. There is an LRU crawler/daemon that does the cache eviction. There is an LRU cache per slab class.
+
+## Threading
+
+Memcached listen on a TCP port (11211) by default. For each connection a new thread is created. There used to be one global lock (a real bottleneck), but now there exists one lock per item, which is much better.
