@@ -33,3 +33,11 @@ Notes:
 
 - It supports publish-subscribe model (similar to Kafka), meaning that you can subscribe to a channel in redis, and when somebody publishes something in that channel, the client gets that message.
 - It switches to push model in that case (using TCP which is a two-way connection)
+
+## Replication/Clustering
+
+Notes:
+
+- Replication: One leader many followers model
+- Clustering: shared data across multiple nodes
+- Hybrid: combine the two above.
