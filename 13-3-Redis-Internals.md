@@ -13,6 +13,23 @@ Notes:
 
 ## Optional Durability
 
-Journaling (Append Only Log AOP)
-Snapshotting (instead of every transaction to be logged to the disk, we can snapshot the entire thing)
-Both of these happen asynchronously in the background.
+Notes:
+
+- Journaling (Append Only Log AOP)
+- Snapshotting (instead of every transaction to be logged to the disk, we can snapshot the entire thing)
+- Both of these happen asynchronously in the background.
+
+## Transport protocol
+
+Notes:
+
+- Uses TCP
+- Request/response just like HTTP
+- Message format is RESP (Redis Serialization Protocol)
+
+## Pub/Sub
+
+Notes:
+
+- It supports publish-subscribe model (similar to Kafka), meaning that you can subscribe to a channel in redis, and when somebody publishes something in that channel, the client gets that message.
+- It switches to push model in that case (using TCP which is a two-way connection)
