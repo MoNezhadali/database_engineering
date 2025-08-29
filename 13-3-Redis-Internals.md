@@ -15,4 +15,4 @@ Notes:
 
 Journaling (Append Only Log AOP)
 Snapshotting (instead of every transaction to be logged to the disk, we can snapshot the entire thing)
-Both of these happen asynchronously in the background.s
+Both of these happen asynchronously in the background.
