@@ -31,6 +31,10 @@ Because hashing maps keys to a fixed size, two keys may hash to the same index c
 
 To solve this, Memcached makes each index in the hash table map to a chain of items as opposed to the item directly. We add the key “Nani” to the chain which has now two items. When the key is read, all items in the chain need to be looked up to determine which one matches the desired key, giving us a O(N) at worse case. Here is an example
 
+### Collision Read
+
+If the hash of several items is the same, there is going to be a collision. In this case you make a bucket of items in the hash table and check them one by one (The key itself is also stored in the key-value table.).
+
 ## Description of Structure
 
 MemCached is an in-memory key value store. It consists of `items` each of which is a pair of `key` and `value`. `key` is a string (`max 250 char`). The value can be any type (maximum `1 MB` but configurable). Keys have expiration date (TTL, time to live), but it is not reliable. Everything is stored in the memory.
