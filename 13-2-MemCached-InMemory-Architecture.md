@@ -48,3 +48,7 @@ The way least recently used items are found is through maintaining a `linked lis
 ## Threading
 
 Memcached listen on a TCP port (11211) by default. For each connection a new thread is created. There used to be one global lock (a real bottleneck), but now there exists one lock per item, which is much better.
+
+## Distributed Cache
+
+MemCached servers are unaware of each other. Client is configured with a server pool. Clients do the distribution through consistent hashing. Up to clients to reshuffle keys when adding/removing servers.s
